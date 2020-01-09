@@ -11,7 +11,7 @@ class TopUs extends Component {
     super(props)
     this.state={ 
       dataSource: [], // Armazena um objeto do Json
-      isLoading: true // Checa se o Json está carregando 
+      isLoading: true, // Checa se o Json está carregando
     }
   } 
 
@@ -49,7 +49,7 @@ class TopUs extends Component {
             shadowRadius: 7.49
           }}
         >
-          <Text style={{  textShadowColor: 'black', color: "#E8E8E8", textShadowOffset: { width: 1, height: 3 },textShadowRadius: 10, fontSize: 40, fontWeight: '800', flex: 1, alignSelf: "center", paddingTop: 30, fontSize: 40}}>Latest articles</Text>
+          <Text style={{  textShadowColor: 'black', color: "#E8E8E8", textShadowOffset: { width: 1, height: 3 },textShadowRadius: 10, fontSize: 40, fontWeight: '800', flex: 1, alignSelf: "center", paddingTop: 30, fontSize: 40}}>Últimos artigos - EUA</Text>
         </View>
       );
     }
