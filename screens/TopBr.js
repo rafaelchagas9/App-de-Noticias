@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 //Importando o modulo axios que é utilizado para lidar com solicitações HTTP
 import axios from 'axios';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, TouchableOpacity, Linking} from 'react-native';
@@ -78,7 +79,7 @@ class TopBr extends Component<Props> {
     if(this.state.isLoading){
       return(
         <View style={styles.container}>
-          <ActivityIndicator/>
+          <ActivityIndicator size="large" style={styles.loadingActivity}/>
         </View>
       ) 
     }
@@ -111,8 +112,6 @@ class TopBr extends Component<Props> {
   }
 }
 
-  
-
 export default TopBr
 
 const styles = StyleSheet.create({
@@ -132,5 +131,9 @@ const styles = StyleSheet.create({
       paddingBottom: 10,
       paddingTop: 10,
       color: "#E8E8E8"
+    },
+    loadingActivity:{
+      alignSelf:"center",
+      justifyContent: "center"
     }
   });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from 'react-native-vector-icons/FontAwesome5'
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image, TouchableOpacity, Linking} from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import 'react-native-gesture-handler';
@@ -13,7 +13,7 @@ const TabNavigator = createBottomTabNavigator({
     navigationOptions:{
       tabBarLabel: 'EUA',
       tabBarIcon: ({tintColor}) => (
-        <Icon name="ios-home" size={24}></Icon>
+        <Icon name="flag-usa" size={20} color='#E8e8e8'></Icon>
       )
     }
   },
@@ -21,14 +21,25 @@ const TabNavigator = createBottomTabNavigator({
   navigationOptions:{
     tabBarLabel: 'Procurar',
     tabBarIcon: ({tintColor}) => (
-    <Icon name="ios-search" size={24}></Icon>
+    <Icon name="search" size={20} color='#E8e8e8'></Icon>
     )
   }},
   TopBr: {screen: TopBr,
     navigationOptions: {
-      tabBarLabel: 'Brasil'
+      tabBarLabel: 'Brasil',
+      tabBarIcon:({tintColor}) => (
+        <Icon name="bold" size={20} color='#E8e8e8'></Icon>
+      )
     }
   }
-});
+},
+  {
+    tabBarOptions:{
+      style:{
+        backgroundColor: '#0d0d0d'
+      }
+    }
+  }
+);
 
 export default createAppContainer(TabNavigator);
