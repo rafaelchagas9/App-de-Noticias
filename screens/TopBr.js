@@ -9,7 +9,8 @@ class TopBr extends Component<Props> {
       super(props)
       this.state={ 
         dataSource: [], // Armazena um objeto do Json
-        isLoading: true // Checa se o Json está carregando 
+        isLoading: true,// Checa se o Json está carregando 
+        page: 1
       }
     }
   
@@ -22,11 +23,21 @@ class TopBr extends Component<Props> {
     }
 
   componentDidMount(){
-    //Fazendo a solicitação da API, depois armazenando o resultado numa arrow function que vai setar os valores do projeto
-    axios.get('https://newsapi.org/v2/top-headlines?country=br&apiKey=4a9888460f184e599a97ed2a0dda9a26')
-      .then(response => {
-        this.setState({ dataSource: response.data.articles, isLoading:false });
+    this.makeRequest()
+  }
 
+  makeRequest(){
+    //Fazendo a solicitação da API, depois armazenando o resultado numa arrow function que vai setar os valores do projeto
+    axios.get(`https://newsapi.org/v2/top-headlines?country=br&pageSize=10&page=${this.state.page}&apiKey=4a9888460f184e599a97ed2a0dda9a26`)
+      .then(response => {
+        if(this.state.dataSource == 0){
+          var fullData = response.data.articles
+        }else{
+          var data = this.state.dataSource
+          var tempData = response.data.articles
+          var fullData = data
+        }
+        this.setState({isLoading:false, dataSource: fullData});
   })
 
   .catch(error => {
@@ -66,13 +77,19 @@ class TopBr extends Component<Props> {
           height: 1,
           marginTop: 12,
           marginBottom: 12,
-          marginStart:5,
+          marginStart:5, 
           marginEnd: 5,
           width: "100%",
           backgroundColor: "#000",
         }}
       />
     );
+  }
+
+  loadNextPage(){
+    console.log(this.state.dataSource.length)
+    this.setState({ page: this.state.page+1 });
+    this.makeRequest()
   }
 
   render(){
@@ -85,11 +102,15 @@ class TopBr extends Component<Props> {
     }
     return (
       <View style={styles.container}>
-        <FlatList
+        <FlatList 
           ListHeaderComponent = { this.FlatListHeader }   
           ItemSeparatorComponent = { this.FlatListItemSeparator }
           data={this.state.dataSource}
           keyExtractor = {(item, index) => index.toString()}
+          onEndReachedThreshold={0.2}
+          onEndReached={({ distanceFromEnd }) => {
+            this.loadNextPage()
+          }}
           renderItem={({ item }) => 
           <View>
             <TouchableOpacity onPress={()=>{Linking.openURL(item.url)}}>
