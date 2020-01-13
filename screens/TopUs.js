@@ -11,25 +11,40 @@ class TopUs extends Component {
     super(props)
     this.state={ 
       dataSource: [], // Armazena um objeto do Json
-      isLoading: true, // Checa se o Json está carregando
+      isLoading: true,
+      page: 1 // Checa se o Json está carregando
     }
   } 
 
   componentDidMount(){
+    this.makeRequest()
+  }
+
+  makeRequest = async () => {
     //Fazendo a solicitação da API, depois armazenando o resultado numa arrow function que vai setar os valores do projeto
-    axios.get('https://newsapi.org/v2/top-headlines?country=us&apiKey=4a9888460f184e599a97ed2a0dda9a26')
-      .then(response => {
-        this.setState({ dataSource: response.data.articles, isLoading:false });
+    axios.get(`https://newsapi.org/v2/top-headlines?country=us&pageSize=10&page=${this.state.page}&apiKey=4a9888460f184e599a97ed2a0dda9a26`)
+    .then(response => {
+      var tempData = [...this.state.dataSource, ...response.data.articles]
+        // Os três pontinhos(...) são necessário para pegar todos os elementos da array, pois expande a array
+        this.setState({isLoading:false, dataSource: tempData});
+    })
 
-  })
+    .catch(error => {
+      if(error == 'Error: Request failed with status code 426'){
+        alert('Não há mais notícias para serem exibidas')
+      }else{
+      alert(`Erro ao solicitar notícias ${error}`)
+      }
+    });
+  }
 
-  .catch(error => {
-    console.log(error);
-  });
+  loadNextPage(){
+    this.setState({ page: this.state.page+1 });
+    this.makeRequest()
   }
 
 
-    FlatListHeader = () => {
+  FlatListHeader = () => {
       return (
         <View elevation={1} 
           style={{
@@ -54,7 +69,7 @@ class TopUs extends Component {
       );
     }
 
-    FlatListItemSeparator = () => {
+  FlatListItemSeparator = () => {
       return (
         <View
           style={{
@@ -85,6 +100,13 @@ class TopUs extends Component {
           ItemSeparatorComponent = { this.FlatListItemSeparator }
           data={this.state.dataSource}
           keyExtractor = {(item, index) => index.toString()}
+          onEndReachedThreshold={0.25}
+          onEndReached={({ distanceFromEnd }) => {
+            this.loadNextPage()
+          }}
+          getItemLayout={(data, index) => (
+            {length: 400, offset: 400 * index, index}
+          )}
           renderItem={({ item }) => 
           <View>
             <TouchableOpacity onPress={()=>{Linking.openURL(item.url)}}>

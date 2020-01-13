@@ -11,6 +11,7 @@ class SearchNews extends Component<Props> {
         dataSource: [], // Armazena um objeto do Json
         isLoading: false, // Checa se o Json está carregando
         searchComplete: false,
+        page: 1,
         query: ""
       }
     }
@@ -59,24 +60,37 @@ class SearchNews extends Component<Props> {
 
 
     handleClick = () => {
-      alert(this.query)
+      alert(this.state.query)
       this.setState({isLoading:true, searchComplete: false})
-
+      this.makeRequest()
+    }
+  makeRequest = async () => {
     //Fazendo a solicitação da API, depois armazenando o resultado numa arrow function que vai setar os valores do projeto
-    axios.get(`https://newsapi.org/v2/everything?q=${this.state.query}&apiKey=4a9888460f184e599a97ed2a0dda9a26`)
+    axios.get(`https://newsapi.org/v2/everything?q=${this.state.query}&pageSize=10&page=${this.state.page}&apiKey=4a9888460f184e599a97ed2a0dda9a26`)
       .then(response => {
-        this.setState({ dataSource: response.data.articles, isLoading:false, searchComplete: true});
+        // Os três pontinhos(...) são necessário para pegar todos os elementos da array, pois expande a array
+        var tempData = [...this.state.dataSource, ...response.data.articles]
+        this.setState({dataSource: tempData, isLoading:false, searchComplete: true});
+    })
 
-  })
-
-  .catch(error => {
-    console.log(error);
-  });
-
+    .catch(error => {
+      if(error == 'Error: Request failed with status code 426'){
+        alert('Não há mais notícias para serem exibidas')
+      }else{
+      alert(`Erro ao solicitar notícias ${error}`)
+      }
+    });
   }
 
     handleSearch = (text) => {
       this.setState({query: text})
+      alert(`Você digitou ${this.state.query}`)
+    }
+
+    loadNextPage(){
+      console.log(this.state.dataSource.length)
+      this.setState({ page: this.state.page+1 });
+      this.makeRequest()
     }
     
 
@@ -100,6 +114,13 @@ class SearchNews extends Component<Props> {
           ItemSeparatorComponent = { this.FlatListItemSeparator }
           data={this.state.dataSource}
           keyExtractor = {(item, index) => index.toString()}
+          onEndReachedThreshold={0.25}
+          onEndReached={({ distanceFromEnd }) => {
+            this.loadNextPage()
+          }}
+          getItemLayout={(data, index) => (
+            {length: 400, offset: 400 * index, index}
+          )}
           renderItem={({ item }) => 
           <View>
             <TouchableOpacity onPress={()=>{Linking.openURL(item.url)}}>
