@@ -1,9 +1,9 @@
 {
   "devToolsPort": 19002,
   "expoServerPort": 19000,
-  "packagerPort": 19001,
-  "packagerPid": 12984,
-  "expoServerNgrokUrl": "https://np-zbv.anonymous.app-de-noticias.exp.direct",
-  "packagerNgrokUrl": "https://packager.np-zbv.anonymous.app-de-noticias.exp.direct",
-  "ngrokPid": 6200
+  "packagerPort": null,
+  "packagerPid": null,
+  "expoServerNgrokUrl": "https://np-zbv.blackgameshd.app-de-noticias.exp.direct",
+  "packagerNgrokUrl": "https://packager.np-zbv.blackgameshd.app-de-noticias.exp.direct",
+  "ngrokPid": 15024
 }

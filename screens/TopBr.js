@@ -9,7 +9,8 @@ class TopBr extends Component<Props> {
       super(props)
       this.state={ 
         dataSource: [], // Armazena um objeto do Json
-        isLoading: true // Checa se o Json está carregando 
+        isLoading: true,// Checa se o Json está carregando 
+        page: 1
       }
     }
   
@@ -22,15 +23,24 @@ class TopBr extends Component<Props> {
     }
 
   componentDidMount(){
-    //Fazendo a solicitação da API, depois armazenando o resultado numa arrow function que vai setar os valores do projeto
-    axios.get('https://newsapi.org/v2/top-headlines?country=br&apiKey=4a9888460f184e599a97ed2a0dda9a26')
-      .then(response => {
-        this.setState({ dataSource: response.data.articles, isLoading:false });
+    this.makeRequest()
+  }
 
-  })
+  makeRequest = async () => {
+    //Fazendo a solicitação da API, depois armazenando o resultado numa arrow function que vai setar os valores do projeto
+    axios.get(`https://newsapi.org/v2/top-headlines?country=br&pageSize=10&page=${this.state.page}&apiKey=4a9888460f184e599a97ed2a0dda9a26`)
+      .then(response => {
+        // Os três pontinhos(...) são necessário para pegar todos os elementos da array, pois expande a array
+        var tempData = [...this.state.dataSource, ...response.data.articles]
+        this.setState({isLoading:false, dataSource: tempData});
+  }) 
 
   .catch(error => {
-    console.log(error);
+    if(error == 'Error: Request failed with status code 426'){
+      alert('Não há mais notícias para serem exibidas')
+    }else{
+    alert(`Erro ao solicitar notícias ${error}`)
+    }
   });
   }
 
@@ -66,7 +76,7 @@ class TopBr extends Component<Props> {
           height: 1,
           marginTop: 12,
           marginBottom: 12,
-          marginStart:5,
+          marginStart:5, 
           marginEnd: 5,
           width: "100%",
           backgroundColor: "#000",
@@ -74,6 +84,24 @@ class TopBr extends Component<Props> {
       />
     );
   }
+
+  loadNextPage(){
+    console.log(this.state.dataSource.length)
+    this.setState({ page: this.state.page+1 });
+    this.makeRequest()
+  }
+
+  renderFooter = () => {
+    if (this.state.loading){
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator />
+      </View>
+    )
+    }else{
+      return null
+    }
+  };
 
   render(){
     if(this.state.isLoading){
@@ -89,7 +117,15 @@ class TopBr extends Component<Props> {
           ListHeaderComponent = { this.FlatListHeader }   
           ItemSeparatorComponent = { this.FlatListItemSeparator }
           data={this.state.dataSource}
+          ListFooterComponent={this.renderFooter}
           keyExtractor = {(item, index) => index.toString()}
+          onEndReachedThreshold={0.25}
+          onEndReached={({ distanceFromEnd }) => {
+            this.loadNextPage()
+          }}
+          getItemLayout={(data, index) => (
+            {length: 400, offset: 400 * index, index}
+          )}
           renderItem={({ item }) => 
           <View>
             <TouchableOpacity onPress={()=>{Linking.openURL(item.url)}}>
