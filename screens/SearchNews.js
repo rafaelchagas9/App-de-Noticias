@@ -60,7 +60,6 @@ class SearchNews extends Component<Props> {
 
 
     handleClick = () => {
-      alert(this.state.query)
       this.setState({isLoading:true, searchComplete: false})
       this.makeRequest()
     }
@@ -84,7 +83,6 @@ class SearchNews extends Component<Props> {
 
     handleSearch = (text) => {
       this.setState({query: text})
-      alert(`Você digitou ${this.state.query}`)
     }
 
     loadNextPage(){
@@ -143,7 +141,7 @@ class SearchNews extends Component<Props> {
       }
       return(
       <View style={styles.container}>
-          <TextInput multiline={true} placeholder='Pesquisar' style={styles.inputSearch} onChangeText={this.handleSearch}/>
+          <TextInput multiline={true} placeholder='Pesquisar' placeholderTextColor="#c9c9c9" style={styles.inputSearch} onChangeText={this.handleSearch}/>
           <Button title="Pesquisar" onPress={this.handleClick}></Button>
       </View>
       )
@@ -161,7 +159,10 @@ const styles = StyleSheet.create({
   },
   inputSearch:{
     height: 50,
-    color: '#E8E8E8'
+    paddingLeft: 10,
+    borderRadius:20,
+    marginBottom: 10,
+    backgroundColor: '#303030'
   },
   noticiaTitulo: {
     padding: 10,
